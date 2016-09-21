@@ -1,6 +1,8 @@
 package com.example.download_demo;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -23,7 +25,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	private TextView tvFileName;
 	private ImageView iv_image;
 	private DownloadUtil downloadUtil = null;
-	private int max = 0;
+	private int max = 0, DownloadSize = 0, FileSize = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,19 @@ public class MainActivity extends Activity implements OnClickListener {
 		iv_image = (ImageView) findViewById(R.id.iv_image);
 		downloadUtil = new DownloadUtil(5, urlString, MainActivity.this,
 				localPath, "FileZilla_3.17.0.1_win64_setup.exe");
+		SharedPreferences sp = getSharedPreferences("test",
+				Activity.MODE_PRIVATE);
+		// 使用getString方法获得value，注意第2个参数是value的默认值
+		DownloadSize = sp.getInt("DownloadSize", 1);
+		FileSize = sp.getInt("FileSize", 1);
+		System.out.println("----=====" + DownloadSize + "-----==" + FileSize);
+		if (DownloadSize != 1) {
+
+			pb.setMax(FileSize);
+			pb.setProgress(DownloadSize);
+			tvFileName.setText((int) (DownloadSize * 100) / FileSize + "%");
+		}
+
 	}
 
 	@Override
@@ -78,6 +93,12 @@ public class MainActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.btn_stop:
 			downloadUtil.pause();
+			SharedPreferences sp = getSharedPreferences("test",
+					Activity.MODE_PRIVATE);
+			Editor edit = sp.edit();
+			edit.putInt("DownloadSize", downloadUtil.getDownloadSize());
+			edit.putInt("FileSize", downloadUtil.getFileSize());
+			edit.commit();
 			break;
 		case R.id.btn_reset:
 			downloadUtil.reset();

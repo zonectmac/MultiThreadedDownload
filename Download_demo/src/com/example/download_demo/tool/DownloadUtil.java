@@ -12,6 +12,10 @@ public class DownloadUtil {
 	private int fileSize;
 	private int downloadSize;
 
+	public int getDownloadSize() {
+		return downloadSize;
+	}
+
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
@@ -32,6 +36,10 @@ public class DownloadUtil {
 			}
 		};
 	};
+
+	public int getFileSize() {
+		return fileSize;
+	}
 
 	public DownloadUtil(int threadCount, String strUrl, Context mContext,
 			String filePath, String fileName) {
